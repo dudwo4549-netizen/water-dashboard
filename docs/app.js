@@ -37,10 +37,18 @@ function initMap() {
 }
 
 // 데이터 수집 API 연동 (유수율 모니터링 - 정적 JSON 파일 로드)
+// window.__DASHBOARD_DATA__ 가 존재하면 저장된 스냅샷 HTML에서 실행 중인 것으로 판단하여 내장 데이터를 우선 사용
 async function fetchData() {
     try {
-        const response = await fetch('data.json');
-        const resJson = await response.json();
+        let resJson;
+        if (window.__DASHBOARD_DATA__) {
+            // 스탠드얼론 저장 HTML: 내장 데이터 직접 사용
+            resJson = window.__DASHBOARD_DATA__;
+            console.log("📦 내장 스냅샷 데이터로 대시보드를 로드합니다.");
+        } else {
+            const response = await fetch('data.json');
+            resJson = await response.json();
+        }
         
         if (resJson.error) {
             console.error(resJson.error);
@@ -962,6 +970,71 @@ function saveSettings() {
 
     alert("💾 Gemini API Key가 성공적으로 브라우저에 임시 저장되었습니다.");
     toggleSettingsModal();
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 대시보드 저장: 현재 대시보드 전체를 독립 실행형 HTML 파일로 저장
+// 저장된 HTML은 별도 서버 없이 브라우저에서 바로 열람 가능하며, 현장 데이터가 내장됨
+// ─────────────────────────────────────────────────────────────────────────────
+async function saveDashboardAsHTML() {
+    const btn = document.querySelector('.export-btn');
+    const originalText = btn ? btn.textContent : '';
+    if (btn) { btn.textContent = '저장 중... ⏳'; btn.disabled = true; }
+
+    try {
+        // 1. CSS 및 JS 파일 내용을 비동기로 가져오기
+        const [cssRes, jsRes] = await Promise.all([
+            fetch('style.css'),
+            fetch('app.js')
+        ]);
+        const cssText = await cssRes.text();
+        const jsText = await jsRes.text();
+
+        // 2. 현재 대시보드 데이터를 JSON으로 직렬화
+        const embeddedPayload = JSON.stringify({
+            weekly: weeklyData,
+            monthly: monthlyData,
+            latest_week: selectedWeek
+        });
+
+        // 3. 현재 페이지 HTML 전체 가져오기
+        let html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+        // 4. style.css 링크를 인라인 <style> 태그로 교체
+        html = html.replace(
+            '<link rel="stylesheet" href="style.css">',
+            `<style>\n${cssText}\n</style>`
+        );
+
+        // 5. app.js를 인라인 <script>로 교체 (데이터 내장 선언 먼저)
+        const inlineJS = `// ── 내장 스냅샷 데이터 (저장 시각: ${new Date().toLocaleString('ko-KR')}) ──\nwindow.__DASHBOARD_DATA__ = ${embeddedPayload};\n\n${jsText}`;
+        html = html.replace(
+            '<script src="app.js"></script>',
+            `<script>\n${inlineJS}\n</script>`
+        );
+
+        // 6. 스냅샷 생성 시각 배너를 <body> 시작 직후에 삽입
+        const saveDateBanner = `<div style="position:fixed; top:0; left:0; right:0; z-index:99999; background:linear-gradient(90deg,#1e3a5f,#2563eb); color:#fff; font-family:'Outfit',sans-serif; font-size:0.85rem; padding:0.4rem 1.2rem; display:flex; justify-content:space-between; align-items:center;"><span>📋 저장된 대시보드 스냅샷 &nbsp;|&nbsp; 저장 일시: ${new Date().toLocaleString('ko-KR')}</span><span style="opacity:0.7; font-size:0.78rem;">이 파일은 저장 시점의 데이터를 포함한 독립 실행형 HTML입니다.</span></div>`;
+        html = html.replace('<body>', `<body>${saveDateBanner}`);
+
+        // 7. Blob URL 생성 후 다운로드 트리거
+        const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+        link.download = `상수도_통합_대시보드_${selectedWeek}_${dateStr}.html`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(url), 3000);
+
+    } catch (e) {
+        console.error('대시보드 저장 실패:', e);
+        alert('❌ 저장 실패: ' + e.message);
+    } finally {
+        if (btn) { btn.textContent = originalText; btn.disabled = false; }
+    }
 }
 
 function exportData() {
