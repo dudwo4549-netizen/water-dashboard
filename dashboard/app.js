@@ -1021,8 +1021,8 @@ async function saveDashboardAsHTML() {
             'window.__DASHBOARD_DATA__ = ' + embeddedPayload + ';\n\n' +
             jsText;
         htmlText = htmlText.replace(
-            '<script src="app.js"></script>',
-            '<script>\n' + inlineJS + '\n</script>'
+            '<' + 'script src="app.js"><' + '/script>',
+            '<' + 'script>\n' + inlineJS + '\n<' + '/script>'
         );
 
         // 5. 상단 배너 삽입
