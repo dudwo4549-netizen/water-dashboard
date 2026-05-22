@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- SEO 및 앱 메타데이터 -->
+    <title>S-WATERS 스마트 민원 대응 가이드</title>
+    <meta name="description" content="S-WATERS 현장 관망 유지관리 및 실시간 민원 대응을 위한 최첨단 모바일 가이드 앱입니다.">
+    <meta name="theme-color" content="#030712">
+    
+    <!-- 폰트 및 스타일 연동 -->
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- 1. App Header -->
+        <header class="app-header">
+            <div class="header-top">
+                <div class="logo-row">
+                    <span class="logo-icon">💧</span>
+                    <h1 class="logo-text">S-WATERS <span>Guide</span></h1>
+                </div>
+                <div class="header-actions">
+                    <button class="theme-btn" onclick="toggleTheme()" aria-label="테마 전환">☀️</button>
+                    <div class="status-indicator">
+                        <span class="live-dot"></span>
+                        <span>실시간 모드</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 통합 검색 바 (모든 탭에서 자동 검색 연동) -->
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" class="search-input" placeholder="수질, 수압, 탁수, 누수, 폭언 등을 검색...">
+            </div>
+        </header>
+
+        <!-- 2. Main Tab Contents -->
+        
+        <!-- Tab 1: 홈 (민원 카테고리 퀵 링크 및 가이드 리스트) -->
+        <div id="homePage" class="tab-content-page fade-in">
+            <main>
+                <div class="welcome-box">
+                    <h1>현장 민원 유형 선택</h1>
+                    <p>민원 유형을 선택하면 고품격 기술 진단 및 대응 SOP가 제공됩니다.</p>
+                </div>
+                
+                <!-- 카테고리 필터 스위치 -->
+                <div class="category-filter-row">
+                    <button class="cat-btn active" data-cat="all" onclick="filterCategory('all')">🔍 전체 보기</button>
+                    <button class="cat-btn" data-cat="water-quality" onclick="filterCategory('water-quality')">💧 수질 민원</button>
+                    <button class="cat-btn" data-cat="pressure" onclick="filterCategory('pressure')">🚀 수압 민원</button>
+                    <button class="cat-btn" data-cat="leak" onclick="filterCategory('leak')">🛠️ 누수 민원</button>
+                    <button class="cat-btn" data-cat="special" onclick="filterCategory('special')">🛡️ 특이/장애</button>
+                </div>
+
+                <!-- 동적 렌더링 영역 (그리드 카드) -->
+                <div class="category-grid" id="categoryGrid">
+                    <!-- JavaScript에서 템플릿 카드가 주입됩니다. -->
+                </div>
+
+                <!-- 긴급 조치 통신망 -->
+                <div class="emergency-panel glass-card">
+                    <h4>🚨 현장 긴급 상황 발생 시</h4>
+                    <p>대형 파손, 노면 붕괴, 싱크홀 조짐 발생 시 즉각 종합상황실과 통화 연결합니다.</p>
+                    <button class="call-control-btn" onclick="alert('종합상황실 긴급 직통전화로 연결합니다 (042-000-0000)')">종합 상황실 즉시 연결</button>
+                </div>
+            </main>
+        </div>
+
+        <!-- Tab 2: 배려 표현 번역기 (Scripts) -->
+        <div id="scriptPage" class="tab-content-page hidden-tab fade-in">
+            <main>
+                <div class="welcome-box">
+                    <h1>💬 배려 표현 번역기</h1>
+                    <p>무심코 사용하는 무뚝뚝한 표현을 부드럽고 상냥한 프로페셔널 표현으로 변환합니다.</p>
+                </div>
+
+                <div class="translator-list" id="translatorList">
+                    <!-- 자바스크립트에서 번역 카드 리스트 주입 -->
+                </div>
+            </main>
+        </div>
+
+        <!-- Tab 3: 현장 상황실 시뮬레이터 (Telemetry Simulator) -->
+        <div id="statusPage" class="tab-content-page hidden-tab fade-in">
+            <main>
+                <div class="welcome-box">
+                    <h1>📊 현장 배수지 실시간 텔레메트리</h1>
+                    <p>현장 관로 내 압력계, 탁도계, 유량센서의 실시간 IoT 피드 데이터입니다.</p>
+                </div>
+
+                <!-- 현장 데이터 상태판 -->
+                <div class="status-grid">
+                    <div class="glass-card status-box sim-pulse-card">
+                        <span class="label">💧 소블록 유입유량</span>
+                        <span class="value" id="simFlow">124.5</span>
+                        <span class="unit">m³/h</span>
+                    </div>
+                    <div class="glass-card status-box sim-pulse-card">
+                        <span class="label">🚀 소블록 수압</span>
+                        <span class="value" id="simPress">2.41</span>
+                        <span class="unit">kgf/㎠</span>
+                    </div>
+                    <div class="glass-card status-box sim-pulse-card" style="grid-column: span 2;">
+                        <span class="label">✨ 실시간 탁도 지수 (정상: 0.5 NTU 이하)</span>
+                        <span class="value" id="simTurb">0.038</span>
+                        <span class="unit">NTU (실시간 양호)</span>
+                    </div>
+                </div>
+
+                <div class="glass-card" style="margin-top:20px; line-height: 1.5;">
+                    <h3 style="font-size:1rem; font-weight:800; margin-bottom:10px; color:var(--neon-cyan);">📋 현장 점검 핵심 노트</h3>
+                    <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:8px;">1. 현장 수압이 1.5kgf/㎠ 이하로 하락 시 즉각 인근 감압밸브(PRV) 오작동 여부를 훑어보십시오.</p>
+                    <p style="font-size:0.8rem; color:var(--text-secondary); margin-bottom:8px;">2. 통수 재개 시에는 급작스러운 유속 변동으로 인한 관 내부 세척 탁수가 인근 수용가로 들어가지 않도록 플러싱 밸브 개방 후 잔류염소를 확인해야 합니다.</p>
+                    <p style="font-size:0.8rem; color:var(--text-secondary);">3. 야간 최소유량(MNF) 수치가 비정상적으로 높을 시에는 도로 침수가 없더라도 맨홀 관로 누수 검사를 수행하십시오.</p>
+                </div>
+            </main>
+        </div>
+
+        <!-- 3. Guide Detail View Modal (기본 숨김) -->
+        <div id="detailView" class="detail-view hidden">
+            <div class="back-btn-row">
+                <button class="close-btn" onclick="closeGuide()">← 가이드 목록</button>
+                <div class="status-indicator">
+                    <span class="live-dot"></span>
+                    <span>SOP 실행 중</span>
+                </div>
+            </div>
+            
+            <div id="detailContent">
+                <!-- 동적으로 JavaScript에서 채워집니다. -->
+            </div>
+        </div>
+
+        <!-- 4. Footer Tab Navigation Bar -->
+        <nav class="tab-bar">
+            <div class="tab-item active" onclick="switchTab('homePage', this)">
+                <span class="tab-icon">🏠</span>
+                <span>가이드 홈</span>
+            </div>
+            <div class="tab-item" onclick="switchTab('scriptPage', this)">
+                <span class="tab-icon">💬</span>
+                <span>배려 스크립트</span>
+            </div>
+            <div class="tab-item" onclick="switchTab('statusPage', this)">
+                <span class="tab-icon">📊</span>
+                <span>현장 상황실</span>
+            </div>
+        </nav>
+    </div>
+
+    <!-- 복사 성공 토스트 메세지 -->
+    <div id="toast" class="toast-popup">📋 복사 완료!</div>
+
+    <!-- 스크립트 파일 연동 -->
+    <script src="app.js"></script>
+</body>
+</html>

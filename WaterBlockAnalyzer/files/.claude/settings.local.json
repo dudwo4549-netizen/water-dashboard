@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls \"D:\\\\Projects\\\\WaterBlockAnalyzer\\\\ValveIsolation\\\\\" 2>/dev/null || echo \"Directory does not exist or is empty\")",
+      "Bash(ls \"D:/Projects/WaterBlockAnalyzer/ValveIsolation/\" 2>/dev/null && echo \"EXISTS\" || echo \"NOT_FOUND\")"
+    ]
+  }
+}

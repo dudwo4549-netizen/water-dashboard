@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상수도 유지관리 전문업체 AI 활용 전략 - 카드뉴스</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                primaryColor: '#0f172a',
+                primaryTextColor: '#f8fafc',
+                lineColor: '#06b6d4',
+                actorBorder: '#06b6d4',
+                signalColor: '#06b6d4',
+                signalTextColor: '#f8fafc'
+            }
+        });
+    </script>
+    <style>
+        /* Custom tweaks for high quality representation */
+        .mermaid {
+            background: rgba(255,255,255,0.02);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+        }
+        .features li {
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .features li strong {
+            color: #06b6d4;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Progress Bar -->
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- Slides Wrapper -->
+        <div class="slides-wrapper" id="slidesWrapper">
+            
+            <!-- Slide 1: Title -->
+            <section class="slide title-slide">
+                <div class="slide-content">
+                    <div class="badge">💧 AI 혁신 가이드</div>
+                    <h1 style="font-size: 2.2rem;">상수도 유지관리<br><span class="highlight">AI 실전 전략</span></h1>
+                    <p class="subtitle">인력 분석부터 입찰 수주 차별화까지</p>
+                    <div class="scroll-hint">옆으로 넘겨보세요 ➔</div>
+                </div>
+                <div class="bg-gradient"></div>
+            </section>
+
+            <!-- Slide 2: 인력 구조 분석 -->
+            <section class="slide info-slide">
+                <div class="slide-content">
+                    <div class="robot-header">
+                        <span class="country">01. 인력 구조 진단</span>
+                        <h2>250명 / 180:15 구조의 실체</h2>
+                    </div>
+                    <div class="robot-info">
+                        <div class="nick">"사무직 15명이 전체 행정의 병목입니다."</div>
+                        <ul class="features">
+                            <li><strong>전형적 구조:</strong> 현장직 비중이 압도적이며, 소수의 사무직이 행정/기술지원/영업/보고서를 올케어</li>
+                            <li><strong>사무직 타겟팅:</strong> 이들의 시간을 30%만 아껴도 <strong>실질적 4~5명 채용 효과</strong> 창출!</li>
+                            <li><strong>현장직 배려:</strong> 복잡한 AI 교육 대신 <strong>"AI 사용 의식 없이"</strong> 혜택만 누리게 설계하는 것이 핵심!</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 3: 직군별 우선순위 -->
+            <section class="slide info-slide">
+                <div class="slide-content">
+                    <div class="robot-header">
+                        <span class="country">01. 인력 구조 진단</span>
+                        <h2>직군별 AI 활용 우선순위</h2>
+                    </div>
+                    <div class="robot-info">
+                        <div class="nick">"우선순위에 맞춘 스마트한 집중"</div>
+                        <ul class="features">
+                            <li><strong>⭐⭐⭐ 사무직 (기술·관리):</strong> 보고서/견적/GIS 대시보드 자동화 (즉시 도입)</li>
+                            <li><strong>⭐⭐⭐ 현장 관리자 (반·과장):</strong> 모바일 챗봇, 보고서 음성 작성 (신속 도입)</li>
+                            <li><strong>⭐⭐ 일반 현장직 (140~150명):</strong> 현장 사진 판독, 음성 보고 (단계적 도입)</li>
+                            <li><strong>⭐⭐ 경영진 & 임원:</strong> 의사결정 대시보드 및 지표 분석 (동행)</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 4: 교육 설계 5대 원칙 -->
+            <section class="slide info-slide">
+                <div class="slide-content">
+                    <div class="robot-header">
+                        <span class="country">02. AI 실전 교육</span>
+                        <h2>직원 대상 AI 교육 5대 원칙</h2>
+                    </div>
+                    <div class="robot-info">
+                        <div class="nick">"이론 강의는 가라, 실무 적용률 100%"</div>
+                        <ul class="features">
+                            <li><strong>직군별 차별화:</strong> 사무직과 현장직은 완전히 다르게!</li>
+                            <li><strong>실습 중심:</strong> 30분 이론 후 90분은 자기 업무 문서 작성 실습</li>
+                            <li><strong>짧고 굵게 자주:</strong> 1회성 특강 대신 시리즈 코스로 정착</li>
+                            <li><strong>사내 실제 사례:</strong> 사내 챔피언이 적용한 꿀팁 위주 공유</li>
+                            <li><strong>거부감 해소:</strong> "AI는 내 야근을 뺏는 도구"로 안심시키기</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 5: 사무직 5주 커리큘럼 -->
+            <section class="slide robot-slide">
+                <div class="slide-content">
+                    <div class="robot-header">
+                        <span class="country">02. AI 실전 교육</span>
+                        <h2>사무직 트랙 A: 5주 완성 코스</h2>
+                    </div>
+                    <div class="icon-box">🎓</div>
+                    <div class="robot-info">
+                        <div class="nick">"매주 2시간씩, 완전한 디지털 무장"</div>
+                        <ul class="features">
+                            <li><strong>1주 (기초):</strong> AI 인턴 다루기, ChatGPT/Claude 기본 활용</li>
+                            <li><strong>2주 (문서):</strong> 시방서/공문서 초안 작성, 프롬프트 4단 구조</li>
+                            <li><strong>3주 (엑셀):</strong> 물량산출서 엑셀 수식 및 VBA 코드 자동화</li>
+                            <li><strong>4주 (시스템):</strong> 사내 구축 RAG 챗봇 & GIS 대시보드 마스터</li>
+                            <li><strong>5주 (성과):</strong> 5분 활용 사례 발표회 및 베스트 유저 시상</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 6: 현장/임원 교육 트랙 -->
+            <section class="slide robot-slide">
+                <div class="slide-content">
+                    <div class="robot-header">
+                        <span class="country">02. AI 실전 교육</span>
+                        <h2>현장관리자 & 임원 맞춤형 교육</h2>
+                    </div>
+                    <div class="icon-box">👷👑</div>
+                    <div class="robot-info">
+                        <div class="nick">"현장 보고 가속화 및 경영 의사결정"</div>
+                        <ul class="features">
+                            <li><strong>현장 관리자 (3주 코스):</strong> 스마트폰 음성 입력으로 현장 일지 작성, 모바일로 KDS 설계기준 즉시 자문 조회</li>
+                            <li><strong>일반 현장직 (1시간):</strong> 도면 외부 유출 방지 등 보안 의식 강화, 안전 관리 AI 활용</li>
+                            <li><strong>경영진 & 임원:</strong> 입찰 전략 수립, AI ROI 분석 및 1:1 코칭</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 7: 수주 차별화 3대 축 -->
+            <section class="slide info-slide">
+                <div class="slide-content">
+                    <div class="robot-header">
+                        <span class="country">03. 수주 차별화 전략</span>
+                        <h2>입찰 판도를 바꿀 3가지 무기</h2>
+                    </div>
+                    <div class="robot-info">
+                        <div class="nick">"기술 변별력이 낮은 업계에서의 돌파구"</div>
+                        <ul class="features">
+                            <li><strong>축 A. 데이터 기반 유지관리:</strong> "단순 시공이 아닌 데이터 분석으로 사고를 예방하는 지능형 파트너"</li>
+                            <li><strong>축 B. AI 자문 시스템 보유:</strong> "1,000여 권 시방서와 법률을 학습한 실시간 AI 자문단으로 시공 품질 보장"</li>
+                            <li><strong>축 C. 투명한 시각화 대시보드:</strong> 발주처 담당자의 의회/감사 대응 업무를 혁신하는 실시간 대시보드 무상 제공</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 8: 제안서 삽입용 도식 -->
+            <section class="slide robot-slide">
+                <div class="slide-content">
+                    <div class="robot-header" style="margin-bottom: 10px;">
+                        <span class="country">03. 수주 차별화 전략</span>
+                        <h2>제안서용 스마트 시스템 도식</h2>
+                    </div>
+                    <div class="mermaid" style="font-size: 10px; height: 160px;">
+                        graph TD
+                            A["[현장 계측 데이터]"] --> B["[자체 GIS DB]"]
+                            B --> C["[시각화 대시보드]"]
+                            C <--> D["[AI 기술자문 챗봇]"]
+                            C --> E["[실시간 보고]"]
+                            style D fill:#06b6d4,stroke:#fff,stroke-width:1px,color:#fff
+                            style E fill:#10b981,stroke:#fff,stroke-width:1px,color:#fff
+                    </div>
+                    <div class="robot-info" style="padding: 10px 20px;">
+                        <ul class="features" style="font-size: 0.8rem;">
+                            <li>• <strong>적용 가치:</strong> 품질 일관성 확보 및 감사/민원 정량 근거 즉시 제공</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 9: 100% 이기는 PT 시연 -->
+            <section class="slide robot-slide">
+                <div class="slide-content">
+                    <div class="robot-header">
+                        <span class="country">03. 수주 차별화 전략</span>
+                        <h2>입찰 PT 현장을 장악하는 비법</h2>
+                    </div>
+                    <div class="icon-box">💡</div>
+                    <div class="robot-info">
+                        <div class="nick">"마지막 2분, 실물 조작 시연의 힘!"</div>
+                        <ul class="features">
+                            <li><strong>실시간 대시보드 시연:</strong> PPT 화면 캡처 대신, 빔프로젝터로 실제 GIS 화면을 직접 클릭하며 분석 시연</li>
+                            <li><strong>챗봇 즉석 검증:</strong> 심사위원 앞에서 "DCIP관 매설 깊이 기준은?" 질문 ➡️ AI가 출처 명시하여 답하는 라이브 시동!</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 10: 장기 비전 및 SaaS -->
+            <section class="slide info-slide">
+                <div class="slide-content">
+                    <div class="robot-header">
+                        <span class="country">04. 미래 비전</span>
+                        <h2>SaaS 및 데이터 솔루션 기업 도약</h2>
+                    </div>
+                    <div class="robot-info">
+                        <div class="nick">"단순 시공사에서 기술 컨설팅 기업으로"</div>
+                        <ul class="features">
+                            <li><strong>데이터 컨설팅:</strong> 노후관 갱생 우선순위 분석 등 기술 용역 외 데이터 정밀 컨설팅 매출 신설</li>
+                            <li><strong>동종 업계 SaaS 배포:</strong> 중소 유지관리 업체를 대상으로 한 클라우드 GIS 분석 대시보드 서비스 출시</li>
+                            <li><strong>지자체 직접 판매:</strong> '스마트 관망 관리 플랫폼' 자체 솔루션 납품</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Slide 11: Conclusion -->
+            <section class="slide end-slide">
+                <div class="slide-content">
+                    <h2 style="font-size: 1.8rem;">팀장님, 지금 바로 시작하시죠!</h2>
+                    <div class="cheer-box" style="margin: 20px 0; text-align: left; font-size: 0.85rem;">
+                        <p>1. <strong>사무직 5주 교육</strong> 즉시 기획 (빠른 ROI 회수)<br>
+                        2. 사내 <strong>AI 챔피언 1명</strong> 지정 (30대 토목 전문가)<br>
+                        3. <strong>GIS 대시보드 + 챗봇</strong> 3개월 내 베타 런칭<br>
+                        4. <strong>다음 입찰 제안서</strong>부터 당장 AI 강점 페이지 추가</p>
+                    </div>
+                    <button class="restart-btn" onclick="goToSlide(0)">다시 보기</button>
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Navigation Controls -->
+        <div class="nav-controls">
+            <button class="nav-btn prev" id="prevBtn">이전</button>
+            <div class="slide-indicator" id="indicator">1 / 11</div>
+            <button class="nav-btn next" id="nextBtn">다음</button>
+            <button class="nav-btn download" id="downloadBtn" style="background-color: #ff4757; margin-left: 10px;">이미지 저장 📸</button>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

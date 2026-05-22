@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💧 상수도 통합 관리 시스템 - 목표유수율 & WBS 공정관리</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet Map CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet Map JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+<body>
+    <!-- Floating AI Chat Trigger Button -->
+    <button class="chat-toggle-btn" onclick="toggleChatSidebar()">
+        💬 AI 챗봇
+    </button>
+
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <h1>💧 상수도 통합 성과관리 시스템</h1>
+                <p class="subtitle">Water Loss Control & WBS Schedule Management System</p>
+            </div>
+            <div class="header-actions">
+                <span class="user-name">관리자: 기술혁신팀 🧑‍💼</span>
+                <button class="guide-trigger-btn" onclick="window.open('guide.html', '_blank')" style="background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.3); color: #a5b4fc; padding: 0.5rem 1rem; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.4rem; transition: all 0.3s ease;">📕 AI 가이드</button>
+                <button class="settings-trigger-btn" onclick="toggleSettingsModal()">⚙️ 설정</button>
+                <button class="export-btn" onclick="exportData()">엑셀 다운로드 📥</button>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs (Project Types) -->
+        <nav class="tabs-container">
+            <button class="tab-btn active" onclick="switchTypeTab('전체', this)">🌍 전체 현장</button>
+            <button class="tab-btn" onclick="switchTypeTab('현대화', this)">🏗️ 현대화사업</button>
+            <button class="tab-btn" onclick="switchTypeTab('사후관리', this)">🔧 사후관리</button>
+            <button class="tab-btn" onclick="switchTypeTab('블록관리', this)">📦 블록관리</button>
+            <button class="tab-btn" onclick="switchTypeTab('누수탐사', this)">🔍 누수탐사</button>
+            <button class="tab-btn" id="monthly-tab-btn" onclick="switchMonthlyTab(this)">📊 월별 실적 통계</button>
+        </nav>
+
+        <!-- TAB 1: KPI & MAP (목표유수율) -->
+        <div id="kpi-tab" class="tab-content active">
+            <!-- 주간 현황 선택 드롭다운 -->
+            <div class="kpi-controls">
+                <div class="week-selector-container">
+                    <span class="week-selector-label">📅 현황 분석 주차 선택:</span>
+                    <select id="weekSelect" onchange="changeWeek(this.value)"></select>
+                    <span id="selected-week-date" style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;"></span>
+                </div>
+            </div>
+
+            <!-- Top KPI Cards -->
+            <section class="kpi-section">
+                <div class="kpi-card glass">
+                    <h3>총 관리 현장</h3>
+                    <div class="kpi-value" id="kpi-sites">0<span class="unit">개소</span></div>
+                </div>
+                <div class="kpi-card glass">
+                    <h3>전체 평균 누적 유수율</h3>
+                    <div class="kpi-value" id="avg-nrw">0<span class="unit">%</span></div>
+                </div>
+                <div class="kpi-card glass alert-card">
+                    <h3>위험(Red) 현장</h3>
+                    <div class="kpi-value alert-text" id="kpi-risks">0<span class="unit">개소</span></div>
+                    <p class="alert-desc">목표대비 3% 이상 미달</p>
+                </div>
+            </section>
+
+            <div class="grid-layout-complex">
+                <!-- Map -->
+                <section class="map-section glass">
+                    <h2>🗺️ 전국 현장 위치 및 상태 현황</h2>
+                    <div id="map" class="map-container"></div>
+                </section>
+                
+                <div class="side-charts">
+                    <!-- Gauge Chart -->
+                    <section class="chart-section glass" style="margin-bottom:1.5rem;">
+                        <h2>🎯 전체 목표 달성률</h2>
+                        <div class="chart-container" style="height: 200px;">
+                            <canvas id="gaugeChart"></canvas>
+                        </div>
+                    </section>
+                    
+                    <!-- Monthly Bar Chart -->
+                    <section class="chart-section glass">
+                        <h2>📈 월별 유수율 향상 추이</h2>
+                        <div class="chart-container" style="height: 200px;">
+                            <canvas id="barChart"></canvas>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <div class="grid-layout">
+                <!-- Main Data Table -->
+                <section class="table-section glass">
+                    <div class="table-header-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 1rem;">
+                        <h2 style="margin: 0;">📊 현장별 유수율 상세 리스트</h2>
+                        <div class="table-subtabs">
+                            <button class="table-subtab-btn active" onclick="switchTableTab('전체', this)">🌍 전체</button>
+                            <button class="table-subtab-btn" onclick="switchTableTab('대상', this)">🎯 성과판정 대상</button>
+                            <button class="table-subtab-btn" onclick="switchTableTab('외', this)">🔧 성과판정 외</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>현장명</th>
+                                    <th>사업구분</th>
+                                    <th>용역 기간</th>
+                                    <th>성과판정일</th>
+                                    <th>목표 유수율</th>
+                                    <th>누적 유수율</th>
+                                    <th>미달률</th>
+                                    <th>상태</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- At-Risk Sites List -->
+                <section class="list-section glass">
+                    <h2>🚨 집중 관리 현장</h2>
+                    <ul class="risk-list" id="risk-list">
+                        <!-- Populated by JS -->
+                    </ul>
+                </section>
+            </div>
+
+            <!-- Site Details Panel (Visible on selection) -->
+            <section class="detail-section glass" id="site-detail-panel" style="margin-top: 1.5rem; display: none;">
+                <h2>🔍 [<span id="detail-site-name">-</span>] 현장 상세 비고 및 개선방향</h2>
+                <div class="detail-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 1rem;">
+                    <div style="background: rgba(59, 130, 246, 0.02); padding: 1rem; border-radius: 8px; border: 1px dashed rgba(59, 130, 246, 0.15);">
+                        <p style="margin: 0.5rem 0; font-size: 0.95rem; color: #1e293b;"><strong>📅 용역 기간:</strong> <span id="detail-duration" style="font-weight: 600;">-</span></p>
+                        <p style="margin: 0.5rem 0; font-size: 0.95rem; color: #1e293b;"><strong>🎯 성과판정 기준일:</strong> <span id="detail-target-date" style="font-weight: 600; color: #2563eb;">-</span></p>
+                        <p style="margin: 0.5rem 0; font-size: 0.95rem; color: #1e293b;"><strong>📌 용역 유형:</strong> <span id="detail-type" style="font-weight: 600;">-</span></p>
+                    </div>
+                    <div>
+                        <p style="margin: 0.5rem 0; font-weight: bold; color: #3b82f6; font-size: 0.95rem;">📝 현장 특이사항 (Remarks):</p>
+                        <div id="detail-remarks" style="background: rgba(59, 130, 246, 0.05); padding: 0.8rem; border-radius: 8px; border-left: 4px solid #3b82f6; font-size: 0.9rem; min-height: 50px; line-height: 1.5; color: #334155;">-</div>
+                    </div>
+                    <div>
+                        <p style="margin: 0.5rem 0; font-weight: bold; color: #10b981; font-size: 0.95rem;">💡 개선 및 조치 방향 (Direction):</p>
+                        <div id="detail-direction" style="background: rgba(16, 185, 129, 0.05); padding: 0.8rem; border-radius: 8px; border-left: 4px solid #10b981; font-size: 0.9rem; min-height: 50px; line-height: 1.5; color: #334155;">-</div>
+                    </div>
+                </div>
+
+                <!-- WBS Process Card -->
+                <div class="wbs-progress-card glass" id="detail-wbs-card" style="margin-top: 1.5rem; background: rgba(255,255,255,0.4); padding: 1.2rem; border-radius: 12px; border: 1px solid rgba(59,130,246,0.15);">
+                    <div class="wbs-card-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+                        <h3 style="margin:0; font-size:1.05rem; color:#1e293b; display:flex; align-items:center; gap:0.5rem;">
+                            📅 공정 관리 상황 (WBS Progress)
+                        </h3>
+                        <span id="detail-wbs-phase" class="wbs-phase-badge">-</span>
+                    </div>
+                    <div class="wbs-card-body" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1.2rem;">
+                        <div class="wbs-progress-item">
+                            <div style="display:flex; justify-content:space-between; font-size:0.85rem; margin-bottom:0.4rem;">
+                                <span style="font-weight:600; color:#475569;">📊 종합 공정률</span>
+                                <span id="detail-wbs-progress-text" style="font-weight:700; color:#2563eb;">0%</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div id="detail-wbs-progress-bar" class="progress-bar-fill blue" style="width: 0%"></div>
+                            </div>
+                        </div>
+                        <div class="wbs-progress-item" id="detail-wbs-specific-container">
+                            <!-- Dynamically populated by JS: Block progress or Leak progress -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- TAB 2: 월별 통계 -->
+        <div id="monthly-tab" class="tab-content">
+            <div class="monthly-header-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <div class="monthly-subtabs" style="display: flex; gap: 0.8rem;">
+                    <button class="subtab-btn active" onclick="switchMonthlyType('전체', this)">🌍 전체</button>
+                    <button class="subtab-btn" onclick="switchMonthlyType('현대화', this)">🏗️ 현대화</button>
+                    <button class="subtab-btn" onclick="switchMonthlyType('사후관리', this)">🔧 사후관리</button>
+                    <button class="subtab-btn" onclick="switchMonthlyType('블록관리', this)">📦 블록관리</button>
+                    <button class="subtab-btn" onclick="switchMonthlyType('누수탐사', this)">🔍 누수탐사</button>
+                </div>
+            </div>
+
+            <!-- Monthly KPI Summary Cards -->
+            <section class="kpi-section" style="margin-bottom: 1.5rem;">
+                <div class="kpi-card glass">
+                    <h3>월별 평균 목표 유수율</h3>
+                    <div class="kpi-value" id="monthly-avg-target">0<span class="unit">%</span></div>
+                </div>
+                <div class="kpi-card glass">
+                    <h3>월별 실제 평균 유수율</h3>
+                    <div class="kpi-value" id="monthly-avg-current">0<span class="unit">%</span></div>
+                </div>
+                <div class="kpi-card glass alert-card">
+                    <h3>평균 유수율 갭 (Gap)</h3>
+                    <div class="kpi-value" id="monthly-avg-gap">0<span class="unit">%</span></div>
+                    <p class="alert-desc" id="monthly-gap-desc">목표 대비 미달/초과 격차</p>
+                </div>
+            </section>
+
+            <div class="grid-layout-complex" style="grid-template-columns: 2fr 1fr; gap: 1.5rem;">
+                <!-- Large Chart Area -->
+                <section class="chart-section glass" style="margin: 0;">
+                    <h2>📈 월별 유수율 및 목표 유수율 추이 비교</h2>
+                    <div class="chart-container" style="height: 380px; position: relative;">
+                        <canvas id="monthlyTrendChart"></canvas>
+                    </div>
+                </section>
+                
+                <!-- Monthly Stats Summary Table -->
+                <section class="table-section glass" style="margin: 0;">
+                    <h2>📊 월별 데이터 분석 요약</h2>
+                    <div class="table-container" style="max-height: 380px; overflow-y: auto;">
+                        <table id="monthlySummaryTable">
+                            <thead>
+                                <tr>
+                                    <th>월구분</th>
+                                    <th>목표 유수율</th>
+                                    <th>실제 유수율</th>
+                                    <th>갭 (Gap)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Collapsible Right AI Chat Sidebar -->
+    <aside class="chat-sidebar" id="chatSidebar">
+        <div class="chat-header">
+            <h3>🏛️ AI 챗봇</h3>
+            <button class="close-sidebar-btn" onclick="toggleChatSidebar()">&times;</button>
+        </div>
+        <div class="chat-intro-banner">
+            <p><strong>수도정비기본계획, 현대화처리지침, 상수도관망 설계기준 해설편(2025)</strong> 등 67개 사내 기술문서 RAG가 가동 중입니다.</p>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="message assistant">
+                상하수도 지침 및 설계 법규 및 기타 자문을 구하고 싶으시면 물어보세요.
+            </div>
+        </div>
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="chatInput" placeholder="예: 구역유량계 적정 설치 위치 기준은?" onkeypress="handleChatKeypress(event)">
+            <button class="chat-send-btn" onclick="sendChatMessage()">전송 🚀</button>
+        </div>
+    </aside>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content glass">
+            <span class="close-btn" onclick="toggleSettingsModal()">&times;</span>
+            <h2>⚙️ 시스템 환경 설정</h2>
+            <div class="form-group" style="margin-top: 1.5rem; margin-bottom: 1.5rem;">
+                <label for="geminiApiKey" style="font-weight: 600; display: block; margin-bottom: 0.5rem; color: var(--text-primary);">Google Gemini API Key</label>
+                <input type="password" id="geminiApiKey" placeholder="AI 기술자문 활성화를 위한 API Key 입력" style="width:100%; padding:0.8rem; border-radius:8px; border:1px solid var(--card-border); font-size: 0.95rem; outline: none;">
+                <p style="font-size:0.8rem; color:var(--text-secondary); margin-top:0.5rem; line-height: 1.4;">
+                    🔑 입력하신 API Key는 로컬 브라우저의 보안 세션에만 임시 저장되며 타인에게 유출되지 않습니다.
+                </p>
+            </div>
+            <button class="save-btn" onclick="saveSettings()">설정 저장 및 반영 💾</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+streamlit
+geopandas
+fiona
+pyproj
+shapely
+folium
+streamlit-folium
+plotly
+pandas
+pyyaml
+streamlit-authenticator
+chardet

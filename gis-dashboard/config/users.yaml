@@ -1,0 +1,17 @@
+credentials:
+  usernames:
+    admin:
+      email: admin@example.com
+      name: 관리자
+      password: "$2b$12$3HZ4cVLSpWRTIB/b/JhNpe2h4Q2dYV4e0Wzn6TCNe9jCqtyKEiZSi"
+      role: admin
+    staff1:
+      email: staff1@example.com
+      name: 김상수
+      password: "$2b$12$3HZ4cVLSpWRTIB/b/JhNpe2h4Q2dYV4e0Wzn6TCNe9jCqtyKEiZSi"
+      role: editor
+
+cookie:
+  name: gis_dashboard_auth
+  key: change_this_to_random_secret_string
+  expiry_days: 7

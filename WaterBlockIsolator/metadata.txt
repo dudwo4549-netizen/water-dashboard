@@ -1,0 +1,11 @@
+[general]
+name=WaterBlock Isolator
+qgisMinimumVersion=3.0
+description=블록 단위 관망 고립(단수)을 위한 제수밸브 자동 탐색기
+version=1.0
+author=Seoyong AI
+email=seoyong@s-waters.com
+about=선택된 소블록 경계와 교차하는 관로를 분석하여, 단수를 위해 차단해야 할 최소한의 제수밸브를 자동으로 탐색합니다.
+tracker=http://github.com/s-waters/issues
+repository=http://github.com/s-waters
+hasProcessingProvider=False

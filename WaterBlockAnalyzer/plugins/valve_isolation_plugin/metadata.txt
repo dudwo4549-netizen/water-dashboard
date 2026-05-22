@@ -1,0 +1,11 @@
+[general]
+name=Valve Isolation Plugin
+qgisMinimumVersion=3.0
+description=관로망 고립 확인을 위한 차단 밸브 자동 선택 플러그인
+version=1.0
+author=Cheongryong
+email=cheongryong@s-waters.com
+repository=http://github.com/s-waters
+about=마우스 클릭으로 관로의 격리 범위를 확인하고 차단해야 할 밸브들을 자동으로 선택 및 표시합니다.
+tracker=http://github.com/s-waters/issues
+hasProcessingProvider=False

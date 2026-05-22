@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="상수도 RAG 통합 대시보드 및 AI 챗봇 사용자 가이드 및 배포 매뉴얼">
+    <title>AI 챗봇 & 대시보드 연계 안내 가이드</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #111827;
+            --bg-card: rgba(17, 24, 39, 0.7);
+            --border-color: rgba(59, 130, 246, 0.15);
+            --border-hover: rgba(59, 130, 246, 0.4);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.3);
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.2);
+            --warning: #f59e0b;
+            --warning-glow: rgba(245, 158, 11, 0.2);
+            --danger: #ef4444;
+            --danger-glow: rgba(239, 68, 68, 0.2);
+            --indigo: #6366f1;
+            --indigo-glow: rgba(99, 102, 241, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(99, 102, 241, 0.06) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+
+        header {
+            padding: 4rem 2rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .logo-container {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem 1.5rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid var(--border-color);
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        .logo-text {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 30%, #93c5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 1.15rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Nav Tabs */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.8rem 1.8rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        /* Content Sections */
+        .guide-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .guide-section.active {
+            display: block;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: transparent;
+            transition: background 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-hover);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .card.primary-border:hover::before { background: var(--primary); }
+        .card.success-border:hover::before { background: var(--success); }
+        .card.warning-border:hover::before { background: var(--warning); }
+        .card.danger-border:hover::before { background: var(--danger); }
+        .card.indigo-border:hover::before { background: var(--indigo); }
+
+        .card-icon {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .card h3 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .card ul {
+            margin-top: 1rem;
+            margin-left: 1.2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .card li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Large detailed section */
+        .details-wrapper {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-top: 2rem;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        .details-wrapper h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+            color: white;
+        }
+
+        /* Accordion style for FAQ/Troubleshoot */
+        .accordion-item {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            background: rgba(17, 24, 30, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .accordion-header {
+            padding: 1.2rem 1.5rem;
+            background: rgba(25, 33, 50, 0.3);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+            transition: background 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background: rgba(59, 130, 246, 0.08);
+        }
+
+        .accordion-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
+            padding: 0 1.5rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .accordion-item.open .accordion-content {
+            max-height: 1000px;
+            padding: 1.2rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            transition: max-height 0.5s ease-in-out;
+        }
+
+        .accordion-item.open .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Code Block Container */
+        .code-container {
+            position: relative;
+            background: #070a13;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 1.2rem;
+            margin: 1.5rem 0;
+            font-family: 'Courier New', Courier, monospace;
+            overflow-x: auto;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding-bottom: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .code-block {
+            color: #a5b4fc;
+            white-space: pre;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .copy-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: var(--text-primary);
+            padding: 0.3rem 0.7rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-danger { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.25); }
+        .badge-warning { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.25); }
+        .badge-success { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.25); }
+        .badge-info { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.25); }
+
+        footer {
+            text-align: center;
+            padding: 4rem 2rem 2rem;
+            border-top: 1px solid var(--border-color);
+            margin-top: 5rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 1rem;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: #60a5fa;
+            text-decoration: underline;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.2rem; }
+            .details-wrapper { padding: 1.5rem; }
+            .tab-btn { padding: 0.6rem 1.2rem; font-size: 0.85rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <span class="logo-dot"></span>
+            <span class="logo-text">System Documentation</span>
+        </div>
+        <h1 id="main-title">AI 챗봇 & 대시보드 시스템 안내 가이드</h1>
+        <p class="subtitle">대시보드 실시간 연동 기능 및 Gemini 503 서버 과부하 오류 발생 시 사용자 대처 방안, GitHub 배포 매뉴얼을 다룹니다.</p>
+        <a href="index.html" class="back-link" id="back-to-dashboard-link">← 대시보드 화면으로 돌아가기</a>
+    </header>
+
+    <main>
+        <!-- Nav Tabs -->
+        <nav class="nav-tabs" aria-label="문서 탭 메뉴">
+            <button class="tab-btn active" onclick="switchTab('overview', this)" id="tab-overview">💡 시스템 개요</button>
+            <button class="tab-btn" onclick="switchTab('trouble', this)" id="tab-trouble">🚨 503 에러 대처 방안</button>
+            <button class="tab-btn" onclick="switchTab('github', this)" id="tab-github">🐙 깃허브 배포 가이드</button>
+        </nav>
+
+        <!-- Section: Overview -->
+        <section id="overview" class="guide-section active">
+            <div class="grid">
+                <!-- Card 1 -->
+                <div class="card primary-border">
+                    <span class="card-icon">🤖</span>
+                    <h3>새로운 명칭과 가치</h3>
+                    <p>
+                        기존 '동룡 기술자문관'에서 직관적이고 세련된 <strong>'AI 챗봇'</strong>으로 브랜딩을 일원화하였습니다. 
+                        환영 메시지가 새롭게 개편되었습니다.
+                    </p>
+                    <ul>
+                        <li><strong>새로운 첫 인사글:</strong> "상하수도 지침 및 설계 법규 및 기타 자문을 구하고 싶으시면 물어보세요."</li>
+                        <li>백엔드 및 프론트엔드 명칭 완전 일치 완료</li>
+                    </ul>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="card success-border">
+                    <span class="card-icon">📊</span>
+                    <h3>실시간 대시보드 데이터 연계</h3>
+                    <p>
+                        이제 AI 챗봇이 단순히 문서(RAG)만 읽는 것이 아닙니다. 
+                        <strong>대시보드 상의 실시간 수치 데이터</strong>를 문맥(Context)으로 함께 참조하여 현장 상황에 특화된 분석 자문을 제공합니다.
+                    </p>
+                    <ul>
+                        <li><strong>분석 대상:</strong> 주차별 관리 현장 수, 전체 평균 실적률, 등급 상태(정상/집중관리/경고), 현장별 상세 미달 수량 등</li>
+                        <li><strong>사용자 질의 예시:</strong> "현재 경고 상태인 현장들의 요약과 조치 방향을 알려줘."</li>
+                    </ul>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="card indigo-border">
+                    <span class="card-icon">🛡️</span>
+                    <h3>복원력(Resilience) 설계</h3>
+                    <p>
+                        네트워크 연결 불안정이나 구글 API의 일시적인 로드 급증 상황에서도 챗봇이 갑자기 멈추지 않고, 
+                        스스로 재시도하며 마지막 수단으로 명확한 조치법을 안내하도록 설계되었습니다.
+                    </p>
+                    <ul>
+                        <li>3회 지수 백오프 자동 재시도</li>
+                        <li>친절한 한국어 안내 메시지 표출</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="details-wrapper">
+                <h2>📊 챗봇의 실시간 데이터 분석 원리</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    대시보드 상에서 사용자가 주차(Week)를 바꾸거나 탭을 전환하면, 프론트엔드의 <code>dashboardData</code> 세션 값이 동적으로 갱신됩니다. 
+                    사용자가 챗봇에 메시지를 보낼 때, 현재 활성화된 화면의 모든 현장 요약 데이터가 프롬프트 서두에 결합되어 구글 Gemini API로 전송됩니다. 
+                    이를 통해 실시간 통계 분석과 지침서(RAG) 검색 근거가 결합된 초정밀 자문 답변이 탄생합니다.
+                </p>
+                <div style="text-align: center;">
+                    <span class="badge badge-info">Frontend Session (app.js)</span> ➡️ 
+                    <span class="badge badge-success">Prompt Context Injection</span> ➡️ 
+                    <span class="badge badge-warning">Gemini 2.5 Flash API</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Troubleshooting -->
+        <section id="trouble" class="guide-section">
+            <div class="card danger-border" style="margin-bottom: 2rem; background: rgba(239, 68, 68, 0.03);">
+                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                    <span style="font-size: 2rem;">❌</span>
+                    <div>
+                        <h3 style="color: var(--danger); margin-bottom: 0.5rem;">Gemini API 서버 일시적 과부하 (503) 현상 안내</h3>
+                        <p style="color: var(--text-primary); font-size: 1rem;">
+                            "Gemini API 서버가 현재 일시적인 과부하 상태(503)입니다. 잠시 후 다시 시도해 주십시오."
+                        </p>
+                        <p style="margin-top: 0.5rem; font-size: 0.9rem;">
+                            위 메시지는 챗봇 내부에 설계된 <strong>3회 자동 재시도(지수 백오프)</strong>가 모두 실패할 정도로 구글 AI 엔진에 트래픽이 폭증했을 때 발생합니다.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="details-wrapper">
+                <h2>🛠️ 오류 발생 시 대처 가이드 (Action Item)</h2>
+                
+                <div class="accordion-item open">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>1단계: 1~2분 정도의 시간 여유를 두고 질문을 다시 전송해 봅니다.</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        구글 Gemini API의 503(Service Unavailable) 및 429(Rate Limit) 오류는 일시적인 요청 급증 스파이크(Spike) 현상에 가깝습니다. 대부분 30초에서 2분 내에 서버 부하가 해소되므로, 다른 조작 없이 입력창에 질문을 <strong>다시 입력하여 전송(Send)</strong>하시면 곧바로 정상 답변을 받아보실 수 있습니다.
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>2단계: 브라우저 화면을 새로고침(F5) 합니다.</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        네트워크 소켓이 지연되었거나 브라우저 캐시로 인해 세션 연결이 중단된 경우일 수 있습니다. <code>F5</code> 또는 <code>Ctrl + F5</code>를 눌러 페이지를 새로고침한 뒤 대시보드 화면 우측 하단의 챗봇 아이콘을 열어 다시 시도하십시오.
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span>3단계: 우측 상단의 설정(⚙️) 메뉴에서 API Key 상태를 점검합니다.</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        등록된 API Key가 비정상적이거나 만료된 상태여도 503 혹은 400 계열의 에러가 발생할 수 있습니다. 대시보드 우측 상단의 ⚙️ 모양 아이콘 버튼을 클릭하여 현재 등록된 Gemini API Key가 정상적인지 확인하고, 필요 시 구글 AI 스튜디오에서 새로운 API Key를 생성하여 다시 대시보드에 임시 등록해 보십시오.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: GitHub Deployment -->
+        <section id="github" class="guide-section">
+            <div class="card primary-border" style="margin-bottom: 2rem;">
+                <span class="card-icon">🐙</span>
+                <h3>GitHub Pages로 대시보드 공유하기</h3>
+                <p>
+                    로컬 PC에서 실행 중인 통합 대시보드(<code>dashboard</code> 폴더)를 GitHub에 업로드하면, 
+                    <strong>서버를 상시 켜두지 않고도 무료 정적 웹 호스팅(GitHub Pages) 링크를 생성</strong>하여 팀원들과 실시간으로 공유할 수 있습니다.
+                </p>
+            </div>
+
+            <div class="details-wrapper">
+                <h2>🚀 깃허브 업로드 및 배포 절차 (5단계)</h2>
+                
+                <h4 style="margin-top: 1.5rem; color: white;">1단계: Local Git 저장소 초기화 및 불필요한 파일 제외</h4>
+                <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">
+                    프로젝트 루트 디렉토리에서 터미널(PowerShell 또는 Bash)을 열고 아래 명령어를 순서대로 실행합니다. 
+                    (백엔드 가상환경이나 불필요한 대형 압축파일은 <code>.gitignore</code>를 작성해 깃 대상에서 제외합니다.)
+                </p>
+                
+                <div class="code-container">
+                    <div class="code-header">
+                        <span>PowerShell / CMD (.gitignore 생성 및 git 초기화)</span>
+                        <button class="copy-btn" onclick="copyCode(this)" id="btn-copy-git-init">Copy</button>
+                    </div>
+                    <div class="code-block" id="code-git-init"># 1. 깃 초기화
+git init
+
+# 2. 불필요 파일 및 폴더 제외용 .gitignore 파일 생성
+echo ".venv_nlm/" >> .gitignore
+echo "__pycache__/" >> .gitignore
+echo "*.zip" >> .gitignore
+echo ".agent" >> .gitignore
+
+# 3. 파일 스테이징 및 최초 커밋
+git add .
+git commit -m "feat: RAG 대시보드 및 AI 챗봇 실시간 데이터 연계 완료"</div>
+                </div>
+
+                <h4 style="margin-top: 2rem; color: white;">2단계: GitHub에 새 리포지토리 생성 및 로컬 연결</h4>
+                <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">
+                    개인 GitHub 계정에 로그인한 뒤, <code>New Repository</code>를 생성합니다. (리포지토리명 예: <code>water-dashboard</code>)<br>
+                    생성된 GitHub 주소를 복사하여 로컬 터미널에 연결하고 최초 푸시(Push)를 수행합니다.
+                </p>
+
+                <div class="code-container">
+                    <div class="code-header">
+                        <span>GitHub 원격 저장소 연결 & 푸시</span>
+                        <button class="copy-btn" onclick="copyCode(this)" id="btn-copy-git-push">Copy</button>
+                    </div>
+                    <div class="code-block" id="code-git-push"># 1. 브랜치명을 main으로 설정
+git branch -M main
+
+# 2. 본인의 깃허브 저장소 주소를 연동 (username과 repo-name 수정 필요)
+git remote add origin https://github.com/사용자계정명/리포지토리명.git
+
+# 3. 원격 저장소로 코드 전송
+git push -u origin main</div>
+                </div>
+
+                <h4 style="margin-top: 2rem; color: white;">3단계: GitHub Pages 기능 활성화</h4>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    코드 푸시가 완료되면, 해당 리포지토리의 웹 페이지 상에서 다음과 같이 호스팅을 켭니다.
+                </p>
+                <ol style="margin-left: 1.5rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    <li style="margin-bottom: 0.5rem;">GitHub 리포지토리 화면 우측 상단의 <strong>⚙️ Settings</strong> 탭을 클릭합니다.</li>
+                    <li style="margin-bottom: 0.5rem;">좌측 사이드바 메뉴에서 <strong>Code and automation</strong> 하위의 <strong>Pages</strong> 메뉴를 선택합니다.</li>
+                    <li style="margin-bottom: 0.5rem;">Build and deployment 섹션의 <strong>Source</strong>가 <code>Deploy from a branch</code>로 설정되어 있는지 확인합니다.</li>
+                    <li style="margin-bottom: 0.5rem;"><strong>Branch</strong> 항목에서 <code>main</code> 브랜치를 선택하고 폴더는 <code>/root</code> 또는 대시보드 구조에 따라 지정한 후 <strong>Save</strong> 버튼을 클릭합니다.</li>
+                </ol>
+
+                <h4 style="margin-top: 2rem; color: white;">4단계: 배포 웹 링크로 접속</h4>
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    1~2분 정도 대기한 후 Settings > Pages 페이지를 새로고침하면 상단에 <strong>"Your site is live at..."</strong>라는 안내와 함께 고유 URL 링크가 나타납니다.
+                </p>
+                <p style="color: var(--primary); font-weight: 600; margin-bottom: 1rem;">
+                    🔗 공개 도메인 주소 형태: <span style="color: var(--success);">https://사용자계정명.github.io/리포지토리명/dashboard/index.html</span>
+                </p>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                    ※ 이 링크를 사용하면 모바일 폰이나 회사 외부 PC에서도 크롬 브라우저를 열어 우측 설정에서 API Key를 입력한 뒤, 현장 실시간 유수율 상태 및 AI 챗봇을 즉각 테스트해 볼 수 있습니다.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 상수도 스마트 관망관리 RAG 분석 시스템. All Rights Reserved.</p>
+        <p style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--text-secondary);">Designed with Rich Aesthetics & Futuristic Glassmorphism</p>
+    </footer>
+
+    <script>
+        // Tab switching logic
+        function switchTab(tabId, btnElement) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.guide-section');
+            sections.forEach(sec => sec.classList.remove('active'));
+
+            // Show selected section
+            const targetSection = document.getElementById(tabId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+
+            // Update active button styling
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+        }
+
+        // Accordion toggle logic
+        function toggleAccordion(headerElement) {
+            const item = headerElement.parentElement;
+            item.classList.toggle('open');
+        }
+
+        // Copy Code utility
+        async function copyCode(buttonElement) {
+            const codeBlockId = buttonElement.id.replace('btn-copy-', 'code-');
+            const codeBlock = document.getElementById(codeBlockId);
+            
+            if (codeBlock) {
+                try {
+                    await navigator.clipboard.writeText(codeBlock.innerText);
+                    const originalText = buttonElement.innerText;
+                    buttonElement.innerText = 'Copied!';
+                    buttonElement.style.background = '#10b981';
+                    buttonElement.style.borderColor = '#10b981';
+                    
+                    setTimeout(() => {
+                        buttonElement.innerText = originalText;
+                        buttonElement.style.background = '';
+                        buttonElement.style.borderColor = '';
+                    }, 2000);
+                } catch (err) {
+                    console.error('클립보드 복사 실패:', err);
+                    alert('복사에 실패했습니다. 마우스 드래그로 수동 복사해 주십시오.');
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install *)",
+      "PowerShell(python -m pip install xlsxwriter openpyxl -q)",
+      "PowerShell(python -c \"import openpyxl; import xlsxwriter; print\\('openpyxl:', openpyxl.__version__\\); print\\('xlsxwriter:', xlsxwriter.__version__\\)\")",
+      "Bash(ls -lh \"/mnt/c/Users/채송이/Desktop/Claude Code Work\\(AI\\)/상수도 유수율 관리/\")",
+      "PowerShell(\\(Get-Item \"C:\\\\Users\\\\채송이\\\\Desktop\\\\Claude Code Work\\(AI\\)\\\\상수도 유수율 관리\\\\유수율관리_메인.xlsx\"\\).Length; \\(Get-Item \"C:\\\\Users\\\\채송이\\\\Desktop\\\\Claude Code Work\\(AI\\)\\\\상수도 유수율 관리\\\\유수율관리_차트리포트.xlsx\"\\).Length)",
+      "Bash(ls -la \"C:\\\\Users\\\\채송이\\\\Desktop\\\\Antigravity\\(AI Work\\)\\\\.mcp_bridge\" 2>/dev/null | head -20)",
+      "Bash(find \"C:\\\\Users\\\\채송이\\\\Desktop\\\\Antigravity\\(AI Work\\)\" -type f -name \"*.log\" 2>/dev/null)",
+      "PowerShell(python -c \"import importlib.util; print\\('google-genai:', 'OK' if importlib.util.find_spec\\('google.genai'\\) else 'NOT FOUND'\\)\")",
+      "PowerShell(if \\(Test-Path \"$env:TEMP\\\\bot_final.txt\"\\) { Get-Content \"$env:TEMP\\\\bot_final.txt\" } else { Write-Output \"file not found\" })"
+    ]
+  }
+}
